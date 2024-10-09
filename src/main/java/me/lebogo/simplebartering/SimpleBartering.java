@@ -6,18 +6,9 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.lebogo.simplebartering.commands.CreateShopCommand;
 import me.lebogo.simplebartering.listener.EntityClickListener;
 import me.lebogo.simplebartering.listener.InventoryListener;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Color;
-import org.bukkit.Material;
+import me.lebogo.simplebartering.listener.TradeListener;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,6 +46,7 @@ public final class SimpleBartering extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new EntityClickListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        getServer().getPluginManager().registerEvents(new TradeListener(), this);
     }
 
     @Override

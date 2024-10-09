@@ -251,6 +251,10 @@ public class InventoryListener implements Listener {
         ));
 
         for (ItemStack itemStack : stock) {
+            // TODO - Items are added to the shop inventory by trading.
+            //  What if more items are coming in than go out? This would result in more stack inside the inventory than the double chest can hold.
+            //  Maybe add some sort of pagination to the inventory?
+
             // get individual item stacks from stacked itemstack
             while (itemStack.getAmount() > itemStack.getMaxStackSize()) {
                 ItemStack clone = itemStack.clone();

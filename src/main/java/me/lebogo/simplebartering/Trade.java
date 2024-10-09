@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @SerializableAs("Trade")
@@ -71,6 +72,18 @@ public final class Trade implements ConfigurationSerializable {
                 "input2=" + input2 + ", " +
                 "output=" + output + ", " +
                 "valid=" + valid + ']';
+    }
+
+    public int getAmount(List<ItemStack> stock) {
+        int stockAmount = 0;
+        int outputAmount = output.getAmount();
+        for (ItemStack itemStack : stock) {
+            if (itemStack.isSimilar(output)) {
+                stockAmount += itemStack.getAmount();
+            }
+        }
+
+        return stockAmount / outputAmount;
     }
 
 

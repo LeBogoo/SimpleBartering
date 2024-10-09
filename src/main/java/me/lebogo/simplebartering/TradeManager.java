@@ -88,31 +88,23 @@ public class TradeManager {
         return (List<ItemStack>) shopConfig.getList("stock");
     }
 
-    public boolean isTradable(Trade trade, List<ItemStack> stock) {
-        boolean tradable = false;
-        ItemStack output = trade.output();
-
-        for (ItemStack stockStack : stock) {
-            if (stockStack.isSimilar(output)) {
-                tradable = true;
-                break;
+    public boolean isItemInStock(String shopId, ItemStack itemStack) {
+        List<ItemStack> stock = getStock(shopId);
+        for (ItemStack stockItem : stock) {
+            if (stockItem.isSimilar(itemStack) && stockItem.getAmount() >= itemStack.getAmount()) {
+                return true;
             }
         }
-
-
-        return tradable;
-
+        return false;
     }
 
     public List<MerchantRecipe> getMerchantRecipes(String shopId) {
         List<Trade> tradeList = getTrades(shopId);
         List<MerchantRecipe> trades = new ArrayList<>();
 
-        // TODO - get stock from config
-
         for (Trade trade : tradeList) {
             if (!trade.valid()) continue;
-            MerchantRecipe merchantTrade = new MerchantRecipe(trade.output(), 0, 100, false);
+            MerchantRecipe merchantTrade = new MerchantRecipe(trade.output(), 0, trade.getAmount(getStock(shopId)), false);
             if (trade.input1() != null) merchantTrade.addIngredient(trade.input1());
             if (trade.input2() != null) merchantTrade.addIngredient(trade.input2());
             trades.add(merchantTrade);
