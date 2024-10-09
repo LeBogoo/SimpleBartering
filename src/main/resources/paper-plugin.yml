@@ -1,0 +1,8 @@
+name: SimpleBartering
+version: '${version}'
+main: me.lebogo.simplebartering.SimpleBartering
+api-version: '1.20'
+prefix: SB
+authors: [LeBogo]
+description: Create custom Villagers so you can sell items for other items to other players!
+website: https://lebogo.me
