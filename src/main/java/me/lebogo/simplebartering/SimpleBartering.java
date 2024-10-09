@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SimpleBartering extends JavaPlugin {
+    public static TradeManager TRADE_MANAGER;
     @Override
     public void onEnable() {
         saveConfig();
@@ -14,7 +15,7 @@ public final class SimpleBartering extends JavaPlugin {
         LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-        });
+        TRADE_MANAGER = new TradeManager(getDataFolder());
     }
 
     @Override
