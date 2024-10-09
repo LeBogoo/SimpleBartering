@@ -1,5 +1,6 @@
 package me.lebogo.simplebartering.listener;
 
+import me.lebogo.simplebartering.Constants;
 import me.lebogo.simplebartering.SimpleBartering;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
@@ -29,14 +30,19 @@ public class EntityClickListener implements Listener {
         Entity entity = event.getRightClicked();
         Player player = event.getPlayer();
         player.sendMessage(Component.text(entity.getName()));
+        player.sendMessage(Component.text(event.getEventName()));
 
-        if (!(entity instanceof WanderingTrader)) return;
-        WanderingTrader trader = (WanderingTrader) entity;
-        PersistentDataContainer persistentDataContainer = trader.getPersistentDataContainer();
-        String shopId = persistentDataContainer.get(SimpleBartering.SHOP_ID_KEY, PersistentDataType.STRING);
+        if (!(entity instanceof WanderingTrader trader)) return;
+        PersistentDataContainer traderDataContainer = trader.getPersistentDataContainer();
+        String shopId = traderDataContainer.get(SimpleBartering.SHOP_ID_KEY, PersistentDataType.STRING);
         if (shopId == null) return;
 
-        String ownerName = persistentDataContainer.get(SimpleBartering.OWNER_KEY, PersistentDataType.STRING);
+        PersistentDataContainer playerDataContainer = player.getPersistentDataContainer();
+        playerDataContainer.set(SimpleBartering.CURRENT_SHOP_ID_KEY, PersistentDataType.STRING, shopId);
+        playerDataContainer.set(SimpleBartering.CURRENT_TRADER_ENTITY_KEY, PersistentDataType.STRING, trader.getUniqueId().toString());
+
+
+        String ownerName = traderDataContainer.get(SimpleBartering.OWNER_KEY, PersistentDataType.STRING);
         assert ownerName != null;
 
         player.sendMessage(Component.text(player.isSneaking()));
@@ -46,8 +52,7 @@ public class EntityClickListener implements Listener {
         boolean isOwner = player.getName().equals(ownerName);
         if (player.isSneaking()) {
             event.setCancelled(true);
-
-            if (isOwner) openShopConfig(player, trader);
+            if (isOwner) openShopConfig(player, trader, shopId);
             else
                 player.sendMessage(
                         Component.textOfChildren(
@@ -63,25 +68,27 @@ public class EntityClickListener implements Listener {
             return;
         }
 
-        List<MerchantRecipe> recipes = new ArrayList<>();
-        // TODO - repalce with actual recipes loaded from store config
-        MerchantRecipe merchantRecipe = new MerchantRecipe(new ItemStack(Material.IRON_AXE), 0, 1000, false);
-        merchantRecipe.addIngredient(new ItemStack(Material.IRON_INGOT, 3));
-        merchantRecipe.addIngredient(new ItemStack(Material.DIAMOND, 1));
-        recipes.add(merchantRecipe);
+        List<MerchantRecipe> merchantRecipes = SimpleBartering.TRADE_MANAGER.getMerchantRecipes(shopId);
+        trader.setRecipes(merchantRecipes);
 
-        trader.setRecipes(recipes);
+        if (merchantRecipes.isEmpty()) {
+            player.sendMessage(Component.text("This shop doesn't have any trades set up yet.").style(Style.style(TextColor.color(0xFCAC04))));
+            if (isOwner) {
+                player.sendMessage(Component.text("You can interact with it while sneaking to set up trades and restock the shop.").style(Style.style(TextColor.color(0xFCAC04))));
+            }
+        }
+
     }
 
 
-    private void openShopConfig(Player player, WanderingTrader trader) {
-        Inventory inventory = player.getServer().createInventory(player, InventoryType.HOPPER, Component.textOfChildren(SimpleBartering.PREFIX_COMPONENT, Component.space(), Component.text("Shop Menu")));
+    private void openShopConfig(Player player, WanderingTrader trader, String shopId) {
+        Inventory inventory = player.getServer().createInventory(player, InventoryType.HOPPER, Component.textOfChildren(Constants.PREFIX_COMPONENT, Component.space(), Constants.SHOP_MENU_TITLE));
 
-        inventory.setItem(0, SimpleBartering.EDIT_ITEM_STACK);
-        inventory.setItem(1, SimpleBartering.FILLER_ITEM_STACK);
-        inventory.setItem(2, SimpleBartering.SHOP_INVENTORY_ITEM_STACK);
-        inventory.setItem(3, SimpleBartering.FILLER_ITEM_STACK);
-        inventory.setItem(4, SimpleBartering.DESTROY_ITEM_STACK);
+        inventory.setItem(0, Constants.EDIT_ITEM_STACK);
+        inventory.setItem(1, Constants.FILLER_ITEM_STACK);
+        inventory.setItem(2, Constants.SHOP_INVENTORY_ITEM_STACK);
+        inventory.setItem(3, Constants.FILLER_ITEM_STACK);
+        inventory.setItem(4, Constants.DESTROY_ITEM_STACK);
 
         player.openInventory(inventory);
     }

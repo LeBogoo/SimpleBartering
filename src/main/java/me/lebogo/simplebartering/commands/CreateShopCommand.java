@@ -35,10 +35,15 @@ public class CreateShopCommand implements BasicCommand {
         trader.setCanPickupItems(false);
         trader.setCanDrinkPotion(false);
         trader.setCanDrinkMilk(false);
+        trader.setCollidable(false);
+
+        String shopId = UUID.randomUUID().toString();
 
         PersistentDataContainer persistentDataContainer = trader.getPersistentDataContainer();
         persistentDataContainer.set(SimpleBartering.OWNER_KEY, PersistentDataType.STRING, player.getName());
-        persistentDataContainer.set(SimpleBartering.SHOP_ID_KEY, PersistentDataType.STRING, UUID.randomUUID().toString());
+        persistentDataContainer.set(SimpleBartering.SHOP_ID_KEY, PersistentDataType.STRING, shopId);
+
+        SimpleBartering.TRADE_MANAGER.createShopConfig(shopId);
 
         List<MerchantRecipe> recipes = new ArrayList<>();
         trader.setRecipes(recipes);

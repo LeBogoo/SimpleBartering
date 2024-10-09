@@ -17,7 +17,7 @@ public class TradeManager {
         this.tradesFolder = tradesFolder;
     }
 
-    private YamlConfiguration getShopConfig(String shopId) {
+    public YamlConfiguration createShopConfig(String shopId) {
         File shopFile = new File(tradesFolder, shopId + ".yml");
         if (!shopFile.exists()) {
             try {
@@ -26,7 +26,33 @@ public class TradeManager {
             }
         }
 
+        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(shopFile);
+        setTrades(shopId, new ArrayList<>());
+        setStock(shopId, new ArrayList<>());
+
+        return yamlConfiguration;
+    }
+
+    public void deleteShopConfig(String shopId) {
+        File shopFile = new File(tradesFolder, shopId + ".yml");
+        if (!shopFile.exists()) {
+            return;
+        }
+        shopFile.delete();
+    }
+
+    private YamlConfiguration getShopConfig(String shopId) {
+        File shopFile = new File(tradesFolder, shopId + ".yml");
         return YamlConfiguration.loadConfiguration(shopFile);
+    }
+
+    public void setTrades(String shopId, List<Trade> trades) {
+        YamlConfiguration shopConfig = getShopConfig(shopId);
+        shopConfig.set("trades", trades);
+        try {
+            shopConfig.save(new File(tradesFolder, shopId + ".yml"));
+        } catch (IOException ignored) {
+        }
     }
 
     public List<Trade> getTrades(String shopId) {
@@ -62,6 +88,22 @@ public class TradeManager {
         return (List<ItemStack>) shopConfig.getList("stock");
     }
 
+    public boolean isTradable(Trade trade, List<ItemStack> stock) {
+        boolean tradable = false;
+        ItemStack output = trade.output();
+
+        for (ItemStack stockStack : stock) {
+            if (stockStack.isSimilar(output)) {
+                tradable = true;
+                break;
+            }
+        }
+
+
+        return tradable;
+
+    }
+
     public List<MerchantRecipe> getMerchantRecipes(String shopId) {
         List<Trade> tradeList = getTrades(shopId);
         List<MerchantRecipe> trades = new ArrayList<>();
@@ -69,9 +111,10 @@ public class TradeManager {
         // TODO - get stock from config
 
         for (Trade trade : tradeList) {
-            MerchantRecipe merchantTrade = new MerchantRecipe(trade.output(), 0, 0, false);
-            merchantTrade.addIngredient(trade.input1());
-            merchantTrade.addIngredient(trade.input2());
+            if (!trade.valid()) continue;
+            MerchantRecipe merchantTrade = new MerchantRecipe(trade.output(), 0, 100, false);
+            if (trade.input1() != null) merchantTrade.addIngredient(trade.input1());
+            if (trade.input2() != null) merchantTrade.addIngredient(trade.input2());
             trades.add(merchantTrade);
         }
 
