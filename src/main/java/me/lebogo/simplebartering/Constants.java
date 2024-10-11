@@ -1,12 +1,15 @@
 package me.lebogo.simplebartering;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
@@ -17,6 +20,7 @@ public class Constants {
     public static final Component SHOP_INVENTORY_TITLE = Component.text("Shop Inventory");
     public static final Component SHOP_EDIT_TRADES_TITLE = Component.text("Edit Trades");
     public static final Component DESTROY_SHOP_MENU_TITLE = Component.text("Destroy Shop?");
+    public static final TextComponent TRADER_SPAWN_EGG_NAME = Component.text("Create Shop").style(Style.style(TextColor.color(0x4FFB54)));
 
     // ItemStacks
     public static ItemStack EDIT_ITEM_STACK = new ItemStack(Material.WRITABLE_BOOK);
@@ -26,6 +30,7 @@ public class Constants {
     public static ItemStack INPUT_1_ITEM_STACK = new ItemStack(Material.EMERALD_BLOCK);
     public static ItemStack INPUT_2_ITEM_STACK = new ItemStack(Material.EMERALD_BLOCK);
     public static ItemStack OUTPUT_ITEM_STACK = new ItemStack(Material.DIAMOND_BLOCK);
+    public static ItemStack TRADER_SPAWN_EGG_ITEM_STACK = new ItemStack(Material.WANDERING_TRADER_SPAWN_EGG);
 
 
     // Custom ItemStacks
@@ -63,6 +68,13 @@ public class Constants {
         outputItemMeta.displayName(Component.text("Output").style(style.color(TextColor.color(0xFB5454))));
         outputItemMeta.lore(List.of(Component.text("Put your output item in this row.")));
         OUTPUT_ITEM_STACK.setItemMeta(outputItemMeta);
+
+        ItemMeta traderSpawnEggItemMeta = TRADER_SPAWN_EGG_ITEM_STACK.getItemMeta();
+        traderSpawnEggItemMeta.displayName(TRADER_SPAWN_EGG_NAME);
+        traderSpawnEggItemMeta.lore(List.of(Component.text("Use this item to create a shop.")));
+        PersistentDataContainer persistentDataContainer = traderSpawnEggItemMeta.getPersistentDataContainer();
+        persistentDataContainer.set(SimpleBartering.TRADER_SPAWN_EGG_KEY, PersistentDataType.BOOLEAN, true);
+        TRADER_SPAWN_EGG_ITEM_STACK.setItemMeta(traderSpawnEggItemMeta);
 
     }
 
