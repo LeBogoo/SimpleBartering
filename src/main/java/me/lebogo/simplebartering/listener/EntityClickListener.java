@@ -5,7 +5,6 @@ import me.lebogo.simplebartering.SimpleBartering;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WanderingTrader;
@@ -14,12 +13,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EntityClickListener implements Listener {
@@ -29,8 +26,6 @@ public class EntityClickListener implements Listener {
         // get name of entity
         Entity entity = event.getRightClicked();
         Player player = event.getPlayer();
-        player.sendMessage(Component.text(entity.getName()));
-        player.sendMessage(Component.text(event.getEventName()));
 
         if (!(entity instanceof WanderingTrader trader)) return;
         PersistentDataContainer traderDataContainer = trader.getPersistentDataContainer();
@@ -44,10 +39,6 @@ public class EntityClickListener implements Listener {
 
         String ownerName = traderDataContainer.get(SimpleBartering.OWNER_KEY, PersistentDataType.STRING);
         assert ownerName != null;
-
-        player.sendMessage(Component.text(player.isSneaking()));
-        player.sendMessage(Component.text(shopId));
-        player.sendMessage(Component.text(ownerName));
 
         boolean isOwner = player.getName().equals(ownerName);
         if (player.isSneaking()) {
