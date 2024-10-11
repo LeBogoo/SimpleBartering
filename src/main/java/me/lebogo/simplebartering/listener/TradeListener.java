@@ -2,9 +2,12 @@ package me.lebogo.simplebartering.listener;
 
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import me.lebogo.simplebartering.SimpleBartering;
+import me.lebogo.simplebartering.Trade;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -51,10 +54,9 @@ public class TradeListener implements Listener {
 
         SimpleBartering.TRADE_MANAGER.setStock(shopId, stock);
 
-
-        // TODO - Disable all trades that don't have enough stock left for another trade
-        // List<MerchantRecipe> merchantRecipes = SimpleBartering.TRADE_MANAGER.getMerchantRecipes(shopId);
-        //        event.getVillager().setRecipes(merchantRecipes);
-
+        // TODO - The GUI doesn't update when the recipes are updated. This is a bug or a limitation of the Spigot/Paper API.
+        //  I don't know if there is a solution for this. May look into this again in the future.
+        List<MerchantRecipe> recipes = SimpleBartering.TRADE_MANAGER.getMerchantRecipes(shopId);
+        event.getVillager().setRecipes(recipes);
     }
 }
