@@ -149,7 +149,7 @@ public class InventoryListener implements Listener {
 
     private void handleEditTradesClose(InventoryCloseEvent event, String shopId) {
         List<Trade> trades = new ArrayList<>();
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i < 9; i++) {
             ItemStack firstInput = event.getView().getTopInventory().getItem(i);
             ItemStack secondInput = event.getView().getTopInventory().getItem(i + 9);
             ItemStack output = event.getView().getTopInventory().getItem(i + 18);
