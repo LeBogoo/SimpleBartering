@@ -74,6 +74,8 @@ public class InventoryListener implements Listener {
 
         if (last.equals(Constants.SHOP_MENU_TITLE)) {
             handleMainMenuClick(event, player, shopId);
+        } else if (last.equals(Constants.SHOP_EDIT_TRADES_TITLE)) {
+            handleEditTradesClick(event);
         } else if (last.equals(Constants.DESTROY_SHOP_MENU_TITLE)) {
             handleDestroyMenuClick(event, player, shopId, traderEntityId);
         }
@@ -166,6 +168,13 @@ public class InventoryListener implements Listener {
         }
 
         SimpleBartering.TRADE_MANAGER.setTrades(shopId, trades);
+    }
+
+    private void handleEditTradesClick(InventoryClickEvent event) {
+        int column = event.getSlot() % 9;
+        if (column == 0) {
+            event.setCancelled(true);
+        }
     }
 
     private void handleDestroyMenuClick(InventoryClickEvent event, Player player, String shopId, String traderEntityId) {
